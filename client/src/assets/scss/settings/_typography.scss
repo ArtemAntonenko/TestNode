@@ -1,0 +1,35 @@
+/* stylelint-disable */
+/* Base typography */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video, input {
+  font-family: $font-body;
+  color: $c--text-general;
+}
+
+//h1 {
+//  font-size: 27px;
+//  margin-bottom: 20px;
+//}
+//
+//h2 {
+//  font-size: 22px;
+//  margin-bottom: 15px;
+//}
+//
+//p,
+//span {
+//  font-size: 18px;
+//  line-height: 1.5em;
+//}
+/* stylelint-enable */
