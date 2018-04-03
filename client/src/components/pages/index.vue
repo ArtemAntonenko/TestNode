@@ -1,6 +1,42 @@
 <template>
   <div>
     <h1>Homepage</h1>
+
+    <div class="article__new-article-form">
+      <span class="article__input-label">Title</span>
+      <v-text-field
+        solo
+        v-model="newArticle.title"
+        flat
+      >
+      </v-text-field>
+
+      <span class="article__input-label">Body</span>
+      <v-text-field
+        solo
+        v-model="newArticle.body"
+        multi-line
+        no-resize
+        flat
+      >
+      </v-text-field>
+
+      <span class="article__input-label">Author</span>
+      <v-text-field
+        solo
+        v-model="newArticle.author"
+        flat
+      >
+      </v-text-field>
+
+      <v-btn
+        @click="addArticle"
+        class="article__add-btn"
+      >
+        Add article
+      </v-btn>
+    </div>
+
     <v-container grid-list-md>
       <v-layout row wrap>
         <v-flex
@@ -43,7 +79,12 @@ export default {
   props: {},
   data () {
     return {
-      articleList: []
+      articleList: [],
+      newArticle: {
+        title: '',
+        body: '',
+        author: ''
+      }
     }
   },
   computed: {},
@@ -71,6 +112,9 @@ export default {
         this.showResultErrorMessage('Error')
         console.log(err)
       }
+    },
+    addArticle () {
+      console.log('addArticle')
     }
   },
   mounted () {
@@ -95,6 +139,31 @@ export default {
       z-index: 1;
       right: 0;
       top: 0;
+    }
+
+    &__add-btn-label {
+      font-size: 17px;
+    }
+
+    &__add-btn {
+      cursor: pointer;
+      margin: 10px auto 5px;
+      display: block;
+    }
+
+    &__new-article-form {
+      background: #e0e0e0;
+      max-width: 49%;
+      margin-left: 9px;
+      border-radius: 5px;
+      padding: 7px 10px 5px 10px;
+    }
+
+    &__input-label {
+      display: inline-block;
+      font-size: 16px;
+      margin-top: 7px;
+      padding: 0 5px 4px 7px;
     }
   }
 </style>
