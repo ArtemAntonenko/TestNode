@@ -44,7 +44,7 @@
           :key="article['_id']"
           v-for="article in articleList"
         >
-          <v-card
+          <v-card v-if="article.editMode"
             class="article__card"
             color="blue lighten-4"
           >
@@ -68,6 +68,43 @@
               @click="deleteArticle(article['_id'])"
             >
               <v-icon>clear</v-icon>
+            </v-btn>
+          </v-card>
+
+          <v-card
+            v-else
+            class="article__card"
+            color="blue lighten-4"
+          >
+            <v-card-title primary-title>
+                <h3 class="headline mb-0 article__title">{{article.title}}</h3>
+            </v-card-title>
+            <v-card-text>
+              {{article.body}}
+            </v-card-text>
+            <div class="article__additional-info">
+              Author: <span class="article__text-bold">{{article.author}}</span>
+            </div>
+            <div class="article__additional-info">
+              Published On: <span class="article__text-bold">{{generatePublishDate(article.publishDate)}}</span>
+            </div>
+            <v-btn
+              fab
+              small
+              flat
+              class="article__btn-delete"
+              @click="deleteArticle(article['_id'])"
+            >
+              <v-icon>clear</v-icon>
+            </v-btn>
+            <v-btn
+              fab
+              small
+              flat
+              class="article__btn-edit"
+              @click="article.editMode = true"
+            >
+              <v-icon>edit</v-icon>
             </v-btn>
           </v-card>
         </v-flex>
@@ -107,7 +144,12 @@ export default {
     async requestArticles () {
       try {
         const res = await this.requestArticleList()
-        this.articleList = res.sort((a, b) => b.publishDate - a.publishDate)
+        this.articleList = res
+          .map(item => {
+            item.editMode = false
+            return item
+          })
+          .sort((a, b) => b.publishDate - a.publishDate)
       } catch (err) {
         console.log(err)
       }
@@ -170,6 +212,13 @@ export default {
       z-index: 1;
       right: 0;
       top: 0;
+    }
+
+    &__btn-edit {
+      position: absolute;
+      z-index: 1;
+      right: 0;
+      bottom: 0;
     }
 
     &__add-btn-label {
