@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import '../plugins/axios-config'
+import '../plugins/dateformat'
 import store from './store'
 import router from './router'
 import Vuetify from 'vuetify'

@@ -30,7 +30,7 @@
       </v-text-field>
 
       <v-btn
-        @click="addArticle"
+        @click="createArticle"
         class="article__add-btn"
       >
         Add article
@@ -54,6 +54,12 @@
             <v-card-text>
               {{article.body}}
             </v-card-text>
+            <div class="article__additional-info">
+              Author: <span class="article__text-bold">{{article.author}}</span>
+            </div>
+            <div class="article__additional-info">
+              Published On: <span class="article__text-bold">{{generatePublishDate(article.publishDate)}}</span>
+            </div>
             <v-btn
               fab
               small
@@ -83,7 +89,8 @@ export default {
       newArticle: {
         title: '',
         body: '',
-        author: ''
+        author: '',
+        publishDate: ''
       }
     }
   },
@@ -93,12 +100,14 @@ export default {
     ...mapActions({
       requestArticleList: 'articles/requestArticles',
       requestDeleteArticle: 'articles/requestDeleteArticle',
+      requestCreateArticle: 'articles/requestCreateArticle',
       showResultSuccessMessage: 'snackbar/showResultSuccessMessage',
       showResultErrorMessage: 'snackbar/showResultErrorMessage'
     }),
     async requestArticles () {
       try {
-        this.articleList = await this.requestArticleList()
+        const res = await this.requestArticleList()
+        this.articleList = res.sort((a, b) => b.publishDate - a.publishDate)
       } catch (err) {
         console.log(err)
       }
@@ -113,8 +122,29 @@ export default {
         console.log(err)
       }
     },
-    addArticle () {
-      console.log('addArticle')
+    async createArticle () {
+      try {
+        this.newArticle.publishDate = new Date().getTime()
+        await this.requestCreateArticle(this.newArticle)
+        await this.requestArticles()
+        this.clearNewArticleData()
+        this.showResultSuccessMessage('Article successfully created')
+      } catch (err) {
+        this.showResultErrorMessage('Error')
+        console.log(err)
+      }
+    },
+    generatePublishDate (data) {
+      const date = new Date(Number(data))
+      return window.dateFormat(date, 'HH:MM dd-mm-yyyy')
+    },
+    clearNewArticleData () {
+      this.newArticle = {
+        title: '',
+        body: '',
+        author: '',
+        publishDate: ''
+      }
     }
   },
   mounted () {
@@ -127,6 +157,7 @@ export default {
   .article {
     &__card {
       position: relative;
+      padding-bottom: 15px;
     }
 
     &__title {
@@ -164,6 +195,14 @@ export default {
       font-size: 16px;
       margin-top: 7px;
       padding: 0 5px 4px 7px;
+    }
+
+    &__additional-info {
+      padding-left: 20px;
+    }
+
+    &__text-bold {
+      font-weight: 500;
     }
   }
 </style>

@@ -12,6 +12,9 @@ const actions = {
   },
   async requestDeleteArticle ({ commit }, { articleId }) {
     await this.$axios.delete(api.articles.deleteArticle(articleId))
+  },
+  async requestCreateArticle ({ commit }, payload) {
+    await this.$axios.post(api.articles.createArticle(), payload)
   }
 }
 

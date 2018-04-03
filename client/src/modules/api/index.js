@@ -15,6 +15,9 @@ const articles = {
   },
   deleteArticle (id) {
     return `${this.slug}/delete-article/${id}`
+  },
+  createArticle () {
+    return `${this.slug}/create-article`
   }
 }
 
