@@ -5,8 +5,8 @@ const state = {}
 const getters = {}
 
 const actions = {
-  async requestArticles ({ commit }) {
-    const { data } = await this.$axios.get(api.articles.getAllArticles())
+  async requestArticles ({ commit }, {searchForTitle = ''}) {
+    const { data } = await this.$axios.get(api.articles.getAllArticles(searchForTitle))
     console.log('data', data)
     return data
   },
@@ -15,6 +15,9 @@ const actions = {
   },
   async requestCreateArticle ({ commit }, payload) {
     await this.$axios.post(api.articles.createArticle(), payload)
+  },
+  async requestUpdateArticle ({ commit }, { id, payload }) {
+    await this.$axios.put(api.articles.updateArticle(id), payload)
   }
 }
 

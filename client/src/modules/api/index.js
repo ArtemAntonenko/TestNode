@@ -10,14 +10,17 @@ if (process.env.NODE_ENV === 'production') {
 
 const articles = {
   slug: 'articles',
-  getAllArticles () {
-    return `${this.slug}/get-all-articles`
+  getAllArticles (searchForTitle) {
+    return `${this.slug}/get-all-articles` + (searchForTitle ? `?search=${searchForTitle}` : '')
   },
   deleteArticle (id) {
     return `${this.slug}/delete-article/${id}`
   },
   createArticle () {
     return `${this.slug}/create-article`
+  },
+  updateArticle (id) {
+    return `${this.slug}/update-article/${id}`
   }
 }
 

@@ -37,6 +37,14 @@
       </v-btn>
     </div>
 
+    <v-text-field
+      solo
+      v-model="searchForTitle"
+      placeholder="Search for title..."
+      class="article__search-input"
+    >
+    </v-text-field>
+
     <v-container grid-list-md>
       <v-layout row wrap>
         <v-flex
@@ -45,30 +53,33 @@
           v-for="article in articleList"
         >
           <v-card v-if="article.editMode"
-            class="article__card"
+            class="article__card article__card-edit"
             color="blue lighten-4"
           >
-            <v-card-title primary-title>
-                <h3 class="headline mb-0 article__title">{{article.title}}</h3>
-            </v-card-title>
-            <v-card-text>
-              {{article.body}}
-            </v-card-text>
-            <div class="article__additional-info">
-              Author: <span class="article__text-bold">{{article.author}}</span>
-            </div>
-            <div class="article__additional-info">
-              Published On: <span class="article__text-bold">{{generatePublishDate(article.publishDate)}}</span>
-            </div>
-            <v-btn
-              fab
-              small
+            <v-text-field
+              solo
+              v-model="article.title"
               flat
-              class="article__btn-delete"
-              @click="deleteArticle(article['_id'])"
+              class="article__edit-input"
             >
-              <v-icon>clear</v-icon>
-            </v-btn>
+            </v-text-field>
+            <v-text-field
+              solo
+              v-model="article.body"
+              multi-line
+              no-resize
+              flat
+              class="article__edit-input"
+            >
+            </v-text-field>
+
+            <div>
+              <v-btn
+                @click="saveChanges(article)"
+              >
+                Save
+              </v-btn>
+            </div>
           </v-card>
 
           <v-card
@@ -128,22 +139,28 @@ export default {
         body: '',
         author: '',
         publishDate: ''
-      }
+      },
+      searchForTitle: ''
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    searchForTitle () {
+      this.requestArticles()
+    }
+  },
   methods: {
     ...mapActions({
       requestArticleList: 'articles/requestArticles',
       requestDeleteArticle: 'articles/requestDeleteArticle',
       requestCreateArticle: 'articles/requestCreateArticle',
+      requestUpdateArticle: 'articles/requestUpdateArticle',
       showResultSuccessMessage: 'snackbar/showResultSuccessMessage',
       showResultErrorMessage: 'snackbar/showResultErrorMessage'
     }),
     async requestArticles () {
       try {
-        const res = await this.requestArticleList()
+        const res = await this.requestArticleList({searchForTitle: this.searchForTitle})
         this.articleList = res
           .map(item => {
             item.editMode = false
@@ -187,6 +204,22 @@ export default {
         author: '',
         publishDate: ''
       }
+    },
+    async saveChanges (article) {
+      try {
+        await this.requestUpdateArticle({
+          id: article['_id'],
+          payload: {
+            title: article.title,
+            body: article.body
+          }
+        })
+        article.editMode = false
+        this.showResultSuccessMessage('Article successfully updated')
+      } catch (err) {
+        this.showResultErrorMessage('Error')
+        console.log('err')
+      }
     }
   },
   mounted () {
@@ -200,6 +233,10 @@ export default {
     &__card {
       position: relative;
       padding-bottom: 15px;
+    }
+
+    &__card-edit {
+      padding: 26px 10px 15px 10px;
     }
 
     &__title {
@@ -252,6 +289,15 @@ export default {
 
     &__text-bold {
       font-weight: 500;
+    }
+
+    &__edit-input {
+      margin-bottom: 10px;
+    }
+
+    &__search-input {
+      margin: 15px 0 0 8px;
+      max-width: 49%;
     }
   }
 </style>

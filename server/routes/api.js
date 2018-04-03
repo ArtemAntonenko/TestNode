@@ -4,12 +4,17 @@ let Article = require('../models/article');
 
 router.route('/get-all-articles')
   .get((req, res) => {
-    Article.find((err, articles) => {
-      if (err)
-        res.send(err);
+  console.log('req query', req.query.search)
+    const settings = req.query.search ?
+      { title: { $regex: new RegExp(req.query.search, 'i') } } :
+      {}
 
-      res.json(articles);
-    });
+    Article.find(settings, (err, articles) => {
+      if (err)
+        res.send(err)
+
+      res.json(articles)
+    })
   })
 
 router.route('/create-article')
@@ -29,6 +34,33 @@ router.route('/create-article')
     })
   })
 
+router.route('/update-article/:article_id')
+  .put((req, res) => {
+    Article.findById(req.params.article_id, function(err, article) {
+
+      if (err)
+        res.send(err);
+
+      article.title = req.body.title
+      article.body = req.body.body
+
+      article.save(function(err) {
+        if (err)
+          res.send(err)
+
+        res.json({ message: 'Article updated!' })
+      })
+    })
+  })
+
+router.route('/get-by-name/:article_name')
+  .get((req, res) => {
+    Article.find({ title: { $regex: new RegExp(req.params.article_name, 'i') } }, function(err, articles) {
+      if (err)
+        res.send(err)
+      res.json(articles)
+    })
+  })
 
 router.route('/delete-article/:article_id')
   .delete((req, res) => {
